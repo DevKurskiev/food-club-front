@@ -1,2 +1,2 @@
 export { default as Header } from "./Header";
-export { default as EstablishmentCards } from "./EstablishmentCards";
+export { default as ProductCards } from "./ProductCards";
