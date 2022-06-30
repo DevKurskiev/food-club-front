@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Icon } from "@atoms";
 import * as constants from "@store/constants/findProduct";
@@ -12,12 +12,13 @@ import {
 } from "./styles";
 
 const Search = () => {
+  const findProduct = useSelector((store) => store.chooseProduct);
   const dispatch = useDispatch();
 
   const handleFindProducts = (e) => {
     dispatch({
       type: constants.FIND_PRODUCT,
-      payload: e.target.value,
+      payload: { ...findProduct, name: e.target.value },
     });
   };
 

@@ -11,10 +11,11 @@ export const ButtonContainer = styled.div`
 export const ButtonItem = styled.button`
   padding: 8px 18px;
   border-radius: 7px;
-  border: none;
+  border: 1px solid ${theme.palette.primary};
   background: ${theme.palette.primary};
   color: ${theme.palette.default};
   font-size: 20px;
+  cursor: pointer;
 
   ${(props) =>
     props.$light &&
@@ -22,9 +23,21 @@ export const ButtonItem = styled.button`
       border: 1px solid ${theme.palette.primary};
       background: ${theme.palette.default};
       color: ${theme.palette.primary};
+
+      &&:hover {
+        border: 1px solid ${theme.palette.primary};
+        background: ${theme.palette.primary};
+        color: ${theme.palette.default};
+      }
     `}
 
   @media ${breakpoint.sm} {
     padding: 4px 18px;
+  }
+
+  &:hover {
+    border: 1px solid ${theme.palette.primary};
+    background: ${theme.palette.default};
+    color: ${theme.palette.primary};
   }
 `;
