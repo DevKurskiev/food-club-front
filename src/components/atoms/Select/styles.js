@@ -16,9 +16,12 @@ export const RadioContainer = styled.div`
 export const RadioItem = styled.div`
   font-size: 36px;
   width: fit-content;
-
   @media ${breakpoint.sm} {
     font-size: 20px;
+  }
+
+  label {
+    border: 2px solid ${theme.palette.default};
   }
 `;
 

@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import DebounceInput from "react-debounce-input";
 
 import { theme } from "@theme";
 import breakpoint from "@utils/media";
@@ -33,7 +34,7 @@ export const SearchItem = styled.div`
   }
 `;
 
-export const SearchInput = styled.input`
+export const SearchInput = styled(DebounceInput)`
   height: 30px;
   width: 100%;
   outline: none;

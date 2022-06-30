@@ -7,21 +7,22 @@ import {
   RadioItemInput,
 } from "./styles";
 
-const Select = ({ options, ...rest }) => {
+const Select = ({ options, onClick, ...rest }) => {
   return (
     <RadioContainer {...rest}>
       {options.map((el, i) => {
         return (
-          <RadioItem key={el}>
+          <RadioItem key={el.value}>
             <RadioItemInput
               id={"radio-" + i}
               type="radio"
               name="radio"
-              value={el}
+              value={el.value}
+              onClick={onClick}
               checked
               readOnly
             />
-            <RadioItemTitle htmlFor={"radio-" + i}>{el}</RadioItemTitle>
+            <RadioItemTitle htmlFor={"radio-" + i}>{el.value}</RadioItemTitle>
           </RadioItem>
         );
       })}
