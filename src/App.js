@@ -1,8 +1,11 @@
 import React, { Fragment } from "react";
 import { Provider } from "react-redux";
+import { Routes, Route } from "react-router-dom";
+
 import { GlobalStyle } from "./globalStyles";
 
-import { Main } from "@pages/common";
+import { Main, Product } from "@pages/common";
+import { NotFound } from "@atoms";
 import store from "@store";
 
 function App() {
@@ -10,7 +13,11 @@ function App() {
     <Fragment>
       <Provider store={store}>
         <GlobalStyle />
-        <Main />
+        <Routes>
+          <Route path="/products" element={<Main />} />
+          <Route path="/product/:id" element={<Product />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </Provider>
     </Fragment>
   );
