@@ -5,7 +5,7 @@ import breakpoint from "@utils/media";
 
 export const RadioContainer = styled.div`
   display: flex;
-  gap: 20px;
+  gap: ${(props) => (props.small ? "10px" : "20px")};
   margin-top: ${(props) => props.mt && "50px"};
 
   @media ${breakpoint.sm} {
@@ -14,10 +14,11 @@ export const RadioContainer = styled.div`
 `;
 
 export const RadioItem = styled.div`
-  font-size: 36px;
+  font-size: ${(props) => (props.small ? "16px" : "36px")};
   width: fit-content;
+
   @media ${breakpoint.sm} {
-    font-size: 20px;
+    font-size: ${(props) => (props.small ? "10px" : "20px")};
   }
 
   label {
@@ -50,6 +51,6 @@ export const RadioItemTitle = styled.label`
   }
 
   @media ${breakpoint.sm} {
-    font-size: padding: 6px 14px;;
+    padding: ${(props) => (props.small ? "5px 7px" : "6px 14px")};
   }
 `;

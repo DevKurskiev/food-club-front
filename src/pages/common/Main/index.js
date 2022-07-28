@@ -3,38 +3,37 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 import useWindowDimensions from "@hooks/useWindowDimensions";
-import * as constants from "@store/constants/findProduct";
+import * as constants from "@store/constants/product";
 import { Select, Search } from "@atoms";
 import { Header, ProductCards } from "@molecules";
 import { Page } from "@organisms";
+import { productCategory } from "./helpers";
 
 const Main = () => {
   const { isMobile } = useWindowDimensions();
-  const [productData, setProductData] = useState([]);
-  const findProduct = useSelector((store) => store.chooseProduct);
+  const [productData, setProductData] = useState({ items: [], loader: true });
+  const product = useSelector((store) => store.chooseProduct);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    axios
-      .post(
-        "/products/take",
-        findProduct?.name
-          ? { findName: findProduct.name }
-          : findProduct?.findType
-          ? { findType: findProduct.findType }
-          : {}
-      )
-      .then((res) => {
-        setProductData(res.data);
+    setProductData({
+      ...productData,
+      loader: true,
+    });
+    axios.post("/products/take", product).then((res) => {
+      setProductData({
+        items: res.data,
+        loader: false,
       });
-  }, [findProduct]);
+    });
+  }, [product]);
 
-  const handleFindProducts = (e) => {
+  const handleProducts = (e) => {
     dispatch({
-      type: constants.FIND_PRODUCT,
+      type: constants.PRODUCT,
       payload: {
-        ...findProduct,
-        findType: e.target.value === "Магазины" ? "shop" : "cafe",
+        ...product,
+        category: e.target.dataset.type,
       },
     });
   };
@@ -43,14 +42,15 @@ const Main = () => {
     <Page>
       <Header />
       <Select
-        onClick={handleFindProducts}
+        onClick={handleProducts}
         mt
-        options={[{ value: "Магазины" }, { value: "Заведения" }]}
+        options={productCategory(product)}
+        checked={product.category}
       />
 
       {isMobile && <Search />}
 
-      <ProductCards products={productData || []} />
+      <ProductCards products={productData} />
     </Page>
   );
 };

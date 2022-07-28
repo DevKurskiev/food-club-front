@@ -6,18 +6,18 @@ import useWindowDimensions from "@hooks/useWindowDimensions";
 
 import { HeaderContainer, HeaderItem, HeaderIconParent } from "./styles";
 
-const Header = () => {
+const Header = ({ isNotSearch, ...props }) => {
   const { isMobile } = useWindowDimensions();
   const navigate = useNavigate();
 
   return (
-    <HeaderContainer isMobile={isMobile}>
+    <HeaderContainer isMobile={isMobile} isNotSearch={isNotSearch}>
       <HeaderItem>
-        <HeaderIconParent>
+        <HeaderIconParent onClick={() => navigate("/products")}>
           <Icon name={isMobile ? "logo-mob" : "logo"} />
         </HeaderIconParent>
       </HeaderItem>
-      {!isMobile && (
+      {!isMobile && !isNotSearch && (
         <HeaderItem>
           <Search />
         </HeaderItem>

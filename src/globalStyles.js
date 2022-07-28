@@ -16,7 +16,10 @@ export const GlobalStyle = createGlobalStyle`
     background-color:  ${theme.palette.primary};
   }
 
-  body{
-    padding-top: 70px;
+  html,
+  body,
+  #root{
+    height: 100%;
+    overflow-x: hidden;
   }
 `;
