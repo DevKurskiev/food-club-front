@@ -2,6 +2,7 @@ export const theme = {
   palette: {
     primary: "#2E2E33",
     disable: "#919399",
+    opacity: "rgba(255, 255, 255, 59%)",
     default: "#FFFFFF",
   },
   breakpoints: {

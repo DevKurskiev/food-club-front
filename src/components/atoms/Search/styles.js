@@ -10,6 +10,7 @@ export const SearchContainer = styled.div`
   border: 1px solid ${theme.palette.primary};
   border-radius: 5px;
   padding: 3px 5px;
+  background: ${theme.palette.default};
 
   @media ${breakpoint.sm} {
     width: 80%;
@@ -21,6 +22,7 @@ export const SearchContainer = styled.div`
 export const SearchItem = styled.div`
   display: flex;
   align-items: center;
+  background: ${theme.palette.default};
 
   ${(props) =>
     props.$fullWidth &&
@@ -41,6 +43,7 @@ export const SearchInput = styled(DebounceInput)`
   font-size: 23px;
   color: ${theme.palette.primary};
   border: none;
+  background: ${theme.palette.default};
 
   @media ${breakpoint.sm} {
     font-size: 15px;

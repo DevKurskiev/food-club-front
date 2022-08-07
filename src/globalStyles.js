@@ -21,5 +21,6 @@ export const GlobalStyle = createGlobalStyle`
   #root{
     height: 100%;
     overflow-x: hidden;
+    background: ${theme.palette.default};
   }
 `;

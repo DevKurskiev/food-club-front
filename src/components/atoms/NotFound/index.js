@@ -24,7 +24,7 @@ const NotFound = () => {
           Упс, <br /> страница не найдена
         </NotFoundTitle>
         <Button
-          buttonText="Перейти к покупка"
+          buttonText="Перейти к покупкам"
           onClick={() => navigate("/products")}
         />
       </NotFoundItem>

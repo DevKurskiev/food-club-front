@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
-import { Select, Loader } from "@atoms";
+import { Search, Select, Loader, Button } from "@atoms";
 import * as constants from "@store/constants/product";
 import useWindowDimensions from "@hooks/useWindowDimensions";
 
@@ -16,28 +18,33 @@ import {
   ProductCardItemName,
   ProductCardItemWeight,
   ProductCardItemPrice,
+  ProductCardItemBasket,
+  ProductCardItemBasketImgParent,
+  ProductCardItemQuanity,
 } from "./styles";
 
-// Конвертация изображения в base64
-function encodeImageFileAsURL(element) {
-  return new Promise((resolve) => {
-    const file = element.files[0];
-    const reader = new FileReader();
-
-    reader.onloadend = () => resolve(reader.result);
-    reader.readAsDataURL(file);
-  });
-}
-
 const ProductCard = ({ product }) => {
+  const params = useParams();
   const dispatch = useDispatch();
   const productType = useSelector((store) => store.chooseProductType);
   const { isMobile } = useWindowDimensions();
+  const productId = params.id;
 
-  console.log("productType", productType);
+  const [productItemsData, setProductItemsData] = useState();
+  const [basketData, setBasketData] = useState([]);
+
+  useEffect(() => {
+    axios.post("/products/take/find-items", { id: productId }).then((res) => {
+      setProductItemsData(res.data[0].items);
+    });
+
+    axios.get("/basket/get-from-basket").then((res) => {
+      console.log(res.data);
+      setBasketData(res.data[0].inBasket);
+    });
+  }, []);
 
   const handleProductsType = (e) => {
-    console.log(productType);
     dispatch({
       type: constants.PRODUCTTYPE,
       payload: {
@@ -47,10 +54,28 @@ const ProductCard = ({ product }) => {
     });
   };
 
-  // Конвертация изображения в base64
-  const handleChange = (event) => {
-    encodeImageFileAsURL(event.target).then((base64) => {
-      console.log(base64);
+  const handleAddedToBasket = async (id) => {
+    setBasketData([...basketData, { id: [id], quanity: 1 }]);
+    await axios.post("/basket/added-to-basket", {
+      id,
+      quanity: 1,
+    });
+  };
+
+  const handleUpadateQuanity = async (e, id) => {
+    const quanity = basketData.find((item) => item.id.includes(id))?.quanity;
+    const type = e.target.dataset.type;
+
+    await axios.post("/basket/update-quanity", {
+      id: id,
+      quanity:
+        type === "increment"
+          ? quanity + 1
+          : type === "decrement" && quanity - 1,
+    });
+
+    axios.get("/basket/get-from-basket").then((res) => {
+      setBasketData(res.data[0].inBasket);
     });
   };
 
@@ -66,7 +91,7 @@ const ProductCard = ({ product }) => {
           <span>{product.address}</span>
         </ProductCardHeaderProductInfo>
       </ProductCardHeader>
-      {/* <input type="file" onChange={handleChange} /> */}
+
       <Select
         onClick={handleProductsType}
         mt
@@ -74,19 +99,54 @@ const ProductCard = ({ product }) => {
         options={product.kinds}
         checked={productType.category}
       />
+
+      {isMobile && <Search />}
+
       <ProductCardItemsParent>
-        {product.items.map((el) => {
-          if (el.type?.includes(productType.category)) {
-            return (
-              <ProductCardItem>
-                <ProductCardItemImg src={el.image} />
-                <ProductCardItemName>{el.name}</ProductCardItemName>
-                <ProductCardItemWeight>{el.weight}гр</ProductCardItemWeight>
-                <ProductCardItemPrice>{el.price}₽</ProductCardItemPrice>
-              </ProductCardItem>
-            );
-          }
-        })}
+        {productItemsData ? (
+          productItemsData.map((el, i) => {
+            if (el.type?.includes(productType.category)) {
+              return (
+                <ProductCardItem key={el.id}>
+                  <ProductCardItemBasketImgParent>
+                    <ProductCardItemImg src={el.image} />
+                    <ProductCardItemBasket className="opacity">
+                      <Button
+                        iconName="basket"
+                        iconSize={25}
+                        hoverNone
+                        onClick={(e) => handleAddedToBasket(el.id)}
+                        $none={basketData?.some((i) => i?.id?.includes(el.id))}
+                      />
+                      <Button
+                        buttonText="+"
+                        data-type="increment"
+                        hoverNone
+                        $none={!basketData?.some((i) => i?.id?.includes(el.id))}
+                        onClick={(e) => handleUpadateQuanity(e, el.id)}
+                      />
+                      <ProductCardItemQuanity>
+                        {basketData.find((i) => i.id.includes(el.id))?.quanity}
+                      </ProductCardItemQuanity>
+                      <Button
+                        buttonText="-"
+                        data-type="decrement"
+                        hoverNone
+                        $none={!basketData?.some((i) => i?.id?.includes(el.id))}
+                        onClick={(e) => handleUpadateQuanity(e, el.id)}
+                      />
+                    </ProductCardItemBasket>
+                  </ProductCardItemBasketImgParent>
+                  <ProductCardItemName>{el.name}</ProductCardItemName>
+                  <ProductCardItemWeight>{el.weight}гр</ProductCardItemWeight>
+                  <ProductCardItemPrice>{el.price}₽</ProductCardItemPrice>
+                </ProductCardItem>
+              );
+            }
+          })
+        ) : (
+          <Loader center={isMobile} />
+        )}
       </ProductCardItemsParent>
     </ProductCardContainer>
   );

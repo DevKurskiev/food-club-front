@@ -38,6 +38,13 @@ const Main = () => {
     });
   };
 
+  const handleSearchProducts = (e) => {
+    dispatch({
+      type: constants.PRODUCT,
+      payload: { ...product, name: e.target.value },
+    });
+  };
+
   return (
     <Page>
       <Header />
@@ -48,7 +55,7 @@ const Main = () => {
         checked={product.category}
       />
 
-      {isMobile && <Search />}
+      {isMobile && <Search onChange={handleSearchProducts} />}
 
       <ProductCards products={productData} />
     </Page>

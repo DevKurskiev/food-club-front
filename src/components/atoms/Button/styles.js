@@ -31,13 +31,29 @@ export const ButtonItem = styled.button`
       }
     `}
 
+  ${(props) =>
+    props.$none &&
+    css`
+      display: none;
+    `}
+  
+  ${(props) =>
+    props.$disable &&
+    css`
+      background: ${theme.palette.disable};
+      border: 1px solid ${theme.palette.disable};
+      cursor: default;
+      pointer-events: none;
+    `}
+
   @media ${breakpoint.sm} {
     padding: 4px 18px;
   }
 
   &:hover {
-    border: 1px solid ${theme.palette.primary};
-    background: ${theme.palette.default};
-    color: ${theme.palette.primary};
+    border: ${(props) =>
+      !props.hoverNone && "1px solid" + theme.palette.primary};
+    background: ${(props) => !props.hoverNone && theme.palette.default};
+    color: ${(props) => !props.hoverNone && theme.palette.primary};
   }
 `;
