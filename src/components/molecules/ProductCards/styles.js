@@ -50,6 +50,7 @@ export const ProductCardsName = styled.div`
   font-size: 24px;
   font-weight: 700;
   padding: 7px;
+  color: ${theme.palette.primary};
 `;
 
 export const ProductCardsSubtitle = styled.div`

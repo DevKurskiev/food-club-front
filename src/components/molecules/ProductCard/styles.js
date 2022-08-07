@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { theme } from "@theme";
 import breakpoint from "@utils/media";
@@ -24,7 +24,7 @@ export const ProductCardHeaderImg = styled.img`
 `;
 
 export const ProductCardHeaderProductInfo = styled.div`
-  background: rgba(255, 255, 255, 59%);
+  background: ${theme.palette.opacity};
   border-radius: 0 50px 0 0;
   position: absolute;
   bottom: 4px;
@@ -55,6 +55,13 @@ export const ProductCardHeaderProductInfo = styled.div`
 export const ProductCardItemsParent = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+
+  @media ${breakpoint.md} {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media ${breakpoint.sm} {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const ProductCardItem = styled.div`
@@ -74,10 +81,19 @@ export const ProductCardItem = styled.div`
   }
 
   &:hover {
-    img {
+    img,
+    .opacity {
+      display: flex;
       transform: scale(1.05);
     }
   }
+`;
+
+export const ProductCardItemBasketImgParent = styled.div`
+  width: 100%;
+  max-height: 178px;
+  border-radius: 10px;
+  position: relative;
 `;
 
 export const ProductCardItemImg = styled.img`
@@ -85,6 +101,24 @@ export const ProductCardItemImg = styled.img`
   max-height: 178px;
   border-radius: 10px;
   object-fit: cover;
+`;
+
+export const ProductCardItemBasket = styled.div`
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  background: ${theme.palette.opacity};
+
+  &:hover {
+    transform: scale(1.05);
+  }
 `;
 
 export const ProductCardItemName = styled.p`
@@ -106,4 +140,10 @@ export const ProductCardItemPrice = styled.p`
   padding: 0 8px;
   text-align: end;
   margin-bottom: 7px;
+`;
+
+export const ProductCardItemQuanity = styled.p`
+  font-size: 24px;
+  font-weight: bold;
+  padding: 0 8px;
 `;

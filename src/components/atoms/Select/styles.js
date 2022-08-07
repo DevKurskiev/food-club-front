@@ -5,7 +5,7 @@ import breakpoint from "@utils/media";
 
 export const RadioContainer = styled.div`
   display: flex;
-  gap: ${(props) => (props.small ? "10px" : "20px")};
+  gap: ${(props) => (props.small ? "5px" : "20px")};
   margin-top: ${(props) => props.mt && "50px"};
 
   @media ${breakpoint.sm} {

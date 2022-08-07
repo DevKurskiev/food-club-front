@@ -1,8 +1,6 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 
 import { Icon } from "@atoms";
-import * as constants from "@store/constants/product";
 
 import {
   SearchContainer,
@@ -11,22 +9,12 @@ import {
   SearchButton,
 } from "./styles";
 
-const Search = () => {
-  const product = useSelector((store) => store.chooseProduct);
-  const dispatch = useDispatch();
-
-  const handleProducts = (e) => {
-    dispatch({
-      type: constants.PRODUCT,
-      payload: { ...product, name: e.target.value },
-    });
-  };
-
+const Search = ({ onChange }) => {
   return (
     <SearchContainer>
       <SearchItem $fullWidth>
         <SearchInput
-          onChange={handleProducts}
+          onChange={onChange}
           type="text"
           placeholder="Название заведения..."
         />
