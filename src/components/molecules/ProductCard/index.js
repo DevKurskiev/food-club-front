@@ -27,16 +27,11 @@ const ProductCard = ({ product }) => {
   const params = useParams();
   const dispatch = useDispatch();
   const productType = useSelector((store) => store.chooseProductType);
-  const basketCounter = useSelector((store) => store.basketCounter);
   const { isMobile } = useWindowDimensions();
   const productId = params.id;
 
   const [productItemsData, setProductItemsData] = useState();
   const [basketData, setBasketData] = useState([]);
-
-  useEffect(() => {
-    console.log(basketCounter);
-  }, [basketCounter]);
 
   useEffect(() => {
     axios.post("/products/take/find-items", { id: productId }).then((res) => {
@@ -113,7 +108,6 @@ const ProductCard = ({ product }) => {
         type: constants.BASKETCOUNTER,
         payload: counter,
       });
-      console.log("counter", counter);
     });
   };
 
