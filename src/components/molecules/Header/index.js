@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 import { Icon, Search, Button } from "@atoms";
 import useWindowDimensions from "@hooks/useWindowDimensions";
@@ -8,7 +9,7 @@ import * as constants from "@store/constants/product";
 
 import { HeaderContainer, HeaderItem, HeaderIconParent } from "./styles";
 
-const Header = ({ isNotSearch, ...props }) => {
+const Header = ({ isNotSearch, counter, ...props }) => {
   const product = useSelector((store) => store.chooseProduct);
   const { isMobile } = useWindowDimensions();
   const navigate = useNavigate();
@@ -46,6 +47,7 @@ const Header = ({ isNotSearch, ...props }) => {
           iconName={isMobile && "basket"}
           iconSize={25}
           onClick={() => navigate("/basket")}
+          counter={counter}
         />
       </HeaderItem>
     </HeaderContainer>

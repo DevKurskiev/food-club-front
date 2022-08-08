@@ -20,13 +20,14 @@ import {
   ProductCardItemPrice,
   ProductCardItemBasket,
   ProductCardItemBasketImgParent,
-  ProductCardItemQuanity,
+  ProductCardItemQuantity,
 } from "./styles";
 
 const ProductCard = ({ product }) => {
   const params = useParams();
   const dispatch = useDispatch();
   const productType = useSelector((store) => store.chooseProductType);
+  const basketCounter = useSelector((store) => store.basketCounter);
   const { isMobile } = useWindowDimensions();
   const productId = params.id;
 
@@ -34,13 +35,25 @@ const ProductCard = ({ product }) => {
   const [basketData, setBasketData] = useState([]);
 
   useEffect(() => {
+    console.log(basketCounter);
+  }, [basketCounter]);
+
+  useEffect(() => {
     axios.post("/products/take/find-items", { id: productId }).then((res) => {
       setProductItemsData(res.data[0].items);
     });
 
     axios.get("/basket/get-from-basket").then((res) => {
-      console.log(res.data);
       setBasketData(res.data[0].inBasket);
+
+      let counter = res.data[0].inBasket
+        .map((el) => el.quantity)
+        .reduce((el, x) => el + x);
+
+      dispatch({
+        type: constants.BASKETCOUNTER,
+        payload: counter,
+      });
     });
   }, []);
 
@@ -55,27 +68,52 @@ const ProductCard = ({ product }) => {
   };
 
   const handleAddedToBasket = async (id) => {
-    setBasketData([...basketData, { id: [id], quanity: 1 }]);
+    setBasketData([...basketData, { id: [id], quantity: 1 }]);
+
     await axios.post("/basket/added-to-basket", {
       id,
-      quanity: 1,
+      quantity: 1,
+    });
+
+    axios.get("/basket/get-from-basket").then((res) => {
+      let counter = res.data[0].inBasket
+        .map((el) => el.quantity)
+        .reduce((el, x) => el + x);
+
+      dispatch({
+        type: constants.BASKETCOUNTER,
+        payload: counter,
+      });
     });
   };
 
-  const handleUpadateQuanity = async (e, id) => {
-    const quanity = basketData.find((item) => item.id.includes(id))?.quanity;
+  const handleUpadatequantity = async (e, id) => {
+    const quantity = basketData.find((item) => item.id.includes(id))?.quantity;
     const type = e.target.dataset.type;
 
-    await axios.post("/basket/update-quanity", {
+    await axios.post("/basket/update-quantity", {
       id: id,
-      quanity:
+      quantity:
         type === "increment"
-          ? quanity + 1
-          : type === "decrement" && quanity - 1,
+          ? quantity + 1
+          : type === "decrement" && quantity - 1,
     });
 
     axios.get("/basket/get-from-basket").then((res) => {
       setBasketData(res.data[0].inBasket);
+
+      let counter =
+        res.data[0].inBasket.length > 0
+          ? res.data[0].inBasket
+              .map((el) => el.quantity)
+              .reduce((el, x) => el + x)
+          : 0;
+
+      dispatch({
+        type: constants.BASKETCOUNTER,
+        payload: counter,
+      });
+      console.log("counter", counter);
     });
   };
 
@@ -123,17 +161,17 @@ const ProductCard = ({ product }) => {
                         data-type="increment"
                         hoverNone
                         $none={!basketData?.some((i) => i?.id?.includes(el.id))}
-                        onClick={(e) => handleUpadateQuanity(e, el.id)}
+                        onClick={(e) => handleUpadatequantity(e, el.id)}
                       />
-                      <ProductCardItemQuanity>
-                        {basketData.find((i) => i.id.includes(el.id))?.quanity}
-                      </ProductCardItemQuanity>
+                      <ProductCardItemQuantity>
+                        {basketData.find((i) => i.id.includes(el.id))?.quantity}
+                      </ProductCardItemQuantity>
                       <Button
                         buttonText="-"
                         data-type="decrement"
                         hoverNone
                         $none={!basketData?.some((i) => i?.id?.includes(el.id))}
-                        onClick={(e) => handleUpadateQuanity(e, el.id)}
+                        onClick={(e) => handleUpadatequantity(e, el.id)}
                       />
                     </ProductCardItemBasket>
                   </ProductCardItemBasketImgParent>
