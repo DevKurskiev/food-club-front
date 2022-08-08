@@ -2,11 +2,12 @@ import React from "react";
 
 import { Icon } from "@atoms";
 
-import { ButtonContainer, ButtonItem } from "./styles";
+import { ButtonContainer, ButtonItem, ButtonItemCounter } from "./styles";
 
-const Button = ({ buttonText, iconName, iconSize, ...rest }) => {
+const Button = ({ buttonText, iconName, iconSize, counter, ...rest }) => {
   return (
     <ButtonContainer>
+      {counter && <ButtonItemCounter>{counter}</ButtonItemCounter>}
       <ButtonItem {...rest}>
         {buttonText}
         {iconName && <Icon iconSize={iconSize} name={iconName} />}

@@ -6,6 +6,7 @@ import breakpoint from "@utils/media";
 export const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
+  position: relative;
 `;
 
 export const ButtonItem = styled.button`
@@ -56,4 +57,15 @@ export const ButtonItem = styled.button`
     background: ${(props) => !props.hoverNone && theme.palette.default};
     color: ${(props) => !props.hoverNone && theme.palette.primary};
   }
+`;
+
+export const ButtonItemCounter = styled.p`
+  position: absolute;
+  left: -4%;
+  top: -10%;
+  border-radius: 7px;
+  font-size: 12px;
+  background: ${theme.palette.primary};
+  color: ${theme.palette.default};
+  padding: 5px;
 `;

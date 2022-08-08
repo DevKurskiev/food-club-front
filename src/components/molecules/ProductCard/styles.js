@@ -142,7 +142,7 @@ export const ProductCardItemPrice = styled.p`
   margin-bottom: 7px;
 `;
 
-export const ProductCardItemQuanity = styled.p`
+export const ProductCardItemQuantity = styled.p`
   font-size: 24px;
   font-weight: bold;
   padding: 0 8px;
