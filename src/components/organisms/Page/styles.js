@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import breakpoints from "@utils/media";
 
@@ -12,4 +12,12 @@ export const PageContainer = styled.div`
   @media ${breakpoints.sm} {
     padding: 50px 10px;
   }
+
+  ${(props) =>
+    props.$row &&
+    css`
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+    `}
 `;

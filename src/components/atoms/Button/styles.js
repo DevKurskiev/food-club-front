@@ -33,6 +33,12 @@ export const ButtonItem = styled.button`
     `}
 
   ${(props) =>
+    props.$fullWidth &&
+    css`
+      width: 100%;
+    `}
+
+  ${(props) =>
     props.$none &&
     css`
       display: none;

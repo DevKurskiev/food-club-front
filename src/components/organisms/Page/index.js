@@ -2,10 +2,10 @@ import React, { Fragment } from "react";
 
 import { PageContainer } from "./styles";
 
-const Page = ({ children }) => {
+const Page = ({ children, ...rest }) => {
   return (
     <Fragment>
-      <PageContainer>{children}</PageContainer>
+      <PageContainer {...rest}>{children}</PageContainer>
     </Fragment>
   );
 };
