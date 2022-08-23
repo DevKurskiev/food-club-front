@@ -10,8 +10,8 @@ import {
   FormTitle,
 } from "./styles";
 
-function From({ options, onClick, buttonText, ...props }) {
-  const [value, setValue] = useState({});
+function From({ options, onClick, buttonText, dataValue, disable, ...props }) {
+  const [value, setValue] = useState(dataValue || {});
 
   function handleChangeInputValue(e, name) {
     setValue({ ...value, [name]: e.target.value });
@@ -24,12 +24,12 @@ function From({ options, onClick, buttonText, ...props }) {
       {options.map((el) => {
         return (
           <FormItem key={el.name}>
-            <FormInputLabel $error={el.$error}>{el.label}</FormInputLabel>
+            <FormInputLabel $error={el.error}>{el.label}</FormInputLabel>
             <FormInput
               type={el.type}
               value={value.value}
               onChange={(e) => handleChangeInputValue(e, el.name)}
-              $error={el.$error}
+              $error={el.error}
             />
           </FormItem>
         );
@@ -39,6 +39,7 @@ function From({ options, onClick, buttonText, ...props }) {
         $fullWidth
         buttonText={buttonText}
         onClick={() => onClick(value)}
+        $disable={disable}
       />
     </FormContainer>
   );
