@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { Form } from "@molecules";
 import { Page } from "@organisms";
@@ -7,6 +10,7 @@ import { Page } from "@organisms";
 import { registrationFormData } from "./helpers";
 
 function Registration() {
+  const navigate = useNavigate();
   const [isError, setIsError] = useState([]);
   const [formData, setFormData] = useState(registrationFormData);
   const [userData, setUserData] = useState({
@@ -21,6 +25,8 @@ function Registration() {
     let inputError = isError;
     let formDataWithError = formData;
 
+    toast.dismiss();
+
     Object.keys(userData).some((el) => {
       let index = isError.indexOf(el);
 
@@ -32,7 +38,8 @@ function Registration() {
 
       el === "repeatPassword" &&
         userData["password"] !== userData["repeatPassword"] &&
-        inputError.push("repeatPassword");
+        inputError.push("repeatPassword") &&
+        toast.error("Пароли не совпадают!");
 
       setIsError(inputError);
     });
@@ -42,10 +49,13 @@ function Registration() {
       setFormData([...formDataWithError]);
     });
 
-    isError.length === 0 &&
-      axios
-        .post("/users/create", userData)
-        .then((res) => console.log(res.data));
+    isError.length === 0
+      ? axios
+          .post("/users/create", userData)
+          .then((res) => console.log(res.data)) &&
+        toast.success("Вы успешно зарегистрировались!") &&
+        navigate("/products")
+      : toast.error("Заполните все поля!");
   };
 
   useEffect(() => {
@@ -53,15 +63,18 @@ function Registration() {
   }, [userData]);
 
   return (
-    <Page $row>
-      <Form
-        options={formData}
-        onClick={handleCreateUser}
-        buttonText="Зарегистрироваться"
-        dataValue={userData}
-        // disable={isError.length > 0}
-      />
-    </Page>
+    <>
+      <ToastContainer />
+      <Page $row>
+        <Form
+          options={formData}
+          onClick={handleCreateUser}
+          buttonText="Зарегистрироваться"
+          dataValue={userData}
+          // disable={isError.length > 0}
+        />
+      </Page>
+    </>
   );
 }
 
