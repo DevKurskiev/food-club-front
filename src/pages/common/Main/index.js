@@ -13,20 +13,8 @@ const Main = () => {
   const { isMobile } = useWindowDimensions();
   const [productData, setProductData] = useState({ items: [], loader: true });
   const product = useSelector((store) => store.chooseProduct);
+  const basketCounter = useSelector((store) => store.basketCounter);
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    setProductData({
-      ...productData,
-      loader: true,
-    });
-    axios.post("/products/take", product).then((res) => {
-      setProductData({
-        items: res.data,
-        loader: false,
-      });
-    });
-  }, [product]);
 
   const handleProducts = (e) => {
     dispatch({
@@ -45,9 +33,35 @@ const Main = () => {
     });
   };
 
+  useEffect(() => {
+    setProductData({
+      ...productData,
+      loader: true,
+    });
+    axios.post("/products/take", product).then((res) => {
+      setProductData({
+        items: res.data,
+        loader: false,
+      });
+    });
+  }, [product]);
+
+  useEffect(() => {
+    axios.get("/basket/get-from-basket").then((res) => {
+      let counter = res.data[0].inBasket
+        .map((el) => el.quantity)
+        .reduce((el, x) => el + x);
+
+      dispatch({
+        type: constants.BASKETCOUNTER,
+        payload: counter,
+      });
+    });
+  }, []);
+
   return (
     <Page>
-      <Header />
+      <Header counter={basketCounter > 0 ? basketCounter : false} />
       <Select
         onClick={handleProducts}
         mt

@@ -14,6 +14,14 @@ export const PageContainer = styled.div`
   }
 
   ${(props) =>
+    props.$center &&
+    css`
+      display: flex;
+      height: 100%;
+      align-items: center;
+    `}
+
+  ${(props) =>
     props.$row &&
     css`
       display: flex;

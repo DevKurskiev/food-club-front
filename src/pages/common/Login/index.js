@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import bcrypt from "bcryptjs";
@@ -19,7 +19,6 @@ function Login() {
     password: "",
   });
 
-  const currentUser = useSelector((store) => store.currentUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -61,14 +60,10 @@ function Login() {
       : toast.error("Заполните все поля!");
   };
 
-  useEffect(() => {
-    console.log("CurrentUser", currentUser);
-  }, [currentUser]);
-
   return (
     <>
       <ToastContainer />
-      <Page $row>
+      <Page $row $center>
         <Form
           options={formData}
           onClick={handleCreateUser}

@@ -11,6 +11,7 @@ import { HeaderContainer, HeaderItem, HeaderIconParent } from "./styles";
 
 const Header = ({ isNotSearch, counter, ...props }) => {
   const product = useSelector((store) => store.chooseProduct);
+  const currentUser = useSelector((store) => store.currentUser);
   const { isMobile } = useWindowDimensions();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -36,10 +37,12 @@ const Header = ({ isNotSearch, counter, ...props }) => {
       )}
       <HeaderItem $flex>
         <Button
-          buttonText={!isMobile && "Войти"}
-          iconName={isMobile && "profile"}
+          buttonText={
+            currentUser.lastName ? currentUser.lastName : !isMobile && "Войти"
+          }
+          iconName={!currentUser.lastName && isMobile && "profile"}
           iconSize={25}
-          onClick={() => navigate("/login")}
+          onClick={() => !currentUser.lastName && navigate("/login")}
         />
         <Button
           buttonText={!isMobile && "Корзина"}
