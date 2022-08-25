@@ -10,7 +10,15 @@ import {
   FormTitle,
 } from "./styles";
 
-function From({ options, onClick, buttonText, dataValue, disable, ...props }) {
+function From({
+  options,
+  onClick,
+  buttonText,
+  title,
+  dataValue,
+  disable,
+  ...props
+}) {
   const [value, setValue] = useState(dataValue || {});
 
   function handleChangeInputValue(e, name) {
@@ -19,7 +27,7 @@ function From({ options, onClick, buttonText, dataValue, disable, ...props }) {
 
   return (
     <FormContainer>
-      <FormTitle>Регистрация</FormTitle>
+      <FormTitle>{title}</FormTitle>
 
       {options.map((el) => {
         return (
