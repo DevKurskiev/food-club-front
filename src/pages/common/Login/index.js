@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import bcrypt from "bcryptjs";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import * as constants from "@store/constants/product";
 import { Form } from "@molecules";
 import { Page } from "@organisms";
+import { loginFormData } from "./helpers";
 
-import { registrationFormData } from "./helpers";
-
-function Registration() {
-  const navigate = useNavigate();
+function Login() {
+  const [formData, setFormData] = useState(loginFormData);
   const [isError, setIsError] = useState([]);
-  const [formData, setFormData] = useState(registrationFormData);
   const [userData, setUserData] = useState({
-    lastName: "",
-    firstName: "",
     email: "",
     password: "",
-    repeatPassword: "",
   });
+
+  const currentUser = useSelector((store) => store.currentUser);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleCreateUser = (userData) => {
     let inputError = isError;
@@ -35,14 +37,9 @@ function Registration() {
         : userData[el].length !== 0 &&
           inputError.includes(el) &&
           inputError.splice(index, 1);
-
-      el === "repeatPassword" &&
-        userData["password"] !== userData["repeatPassword"] &&
-        inputError.push("repeatPassword") &&
-        toast.error("Пароли не совпадают!");
-
-      setIsError(inputError);
     });
+
+    setIsError(inputError);
 
     formDataWithError.forEach((el, i) => {
       el.error = isError.includes(el.name) ? true : false;
@@ -50,11 +47,23 @@ function Registration() {
     });
 
     isError.length === 0
-      ? axios.post("/users/create", userData) &&
-        toast.success("Вы успешно зарегистрировались!") &&
-        navigate("/products")
+      ? axios.post("/users/login", userData).then((res) => {
+          res.data.length > 0 &&
+          bcrypt.compareSync(userData.password, res.data[0].password)
+            ? dispatch({
+                type: constants.CURRENTUSER,
+                payload: res.data[0],
+              }) &&
+              navigate("/products") &&
+              toast.success("Вы успешно вошли в аккаунт!")
+            : toast.error("Неправильный email или пароль!");
+        })
       : toast.error("Заполните все поля!");
   };
+
+  useEffect(() => {
+    console.log("CurrentUser", currentUser);
+  }, [currentUser]);
 
   return (
     <>
@@ -63,8 +72,8 @@ function Registration() {
         <Form
           options={formData}
           onClick={handleCreateUser}
-          buttonText="Зарегистрироваться"
-          title="Зарегистрироваться"
+          buttonText="Вход"
+          title="Вход"
           dataValue={userData}
         />
       </Page>
@@ -72,4 +81,4 @@ function Registration() {
   );
 }
 
-export default Registration;
+export default Login;

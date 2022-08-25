@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 
 import { GlobalStyle } from "./globalStyles";
 
-import { Main, Product, Registration } from "@pages/common";
+import { Main, Product, Registration, Login } from "@pages/common";
 import { NotFound } from "@atoms";
 import store from "@store";
 
@@ -15,6 +15,7 @@ function App() {
         <GlobalStyle />
         <Routes>
           <Route path="/registration" element={<Registration />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/products" element={<Main />} />
           <Route path="/product/:id" element={<Product />} />
           <Route path="*" element={<NotFound />} />
