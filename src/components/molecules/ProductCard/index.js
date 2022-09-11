@@ -72,8 +72,6 @@ const ProductCard = ({ product }) => {
         ? basketData.find((el) => el.id === id).quantity + 1
         : basketData.find((el) => el.id === id).quantity - 1;
 
-    console.log(action, quantity);
-
     axios
       .post("/users/update-quantity", {
         userId: currentUser?.userId,
@@ -88,8 +86,6 @@ const ProductCard = ({ product }) => {
 
         setBasketData(res.data.basket);
       });
-
-    console.log(action, quantity);
   };
 
   return !product ? (

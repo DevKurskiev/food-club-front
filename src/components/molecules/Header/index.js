@@ -27,7 +27,12 @@ const Header = ({ isNotSearch, counter, ...props }) => {
     setBasketCounter(
       currentUser?.basket?.length > 0 ? currentUser?.basket.length : false
     );
-    console.log("Header", currentUser);
+    let count = 0;
+
+    currentUser?.basket.map((el) => {
+      count += el.quantity;
+      setBasketCounter(count);
+    });
   }, [currentUser]);
 
   return (
