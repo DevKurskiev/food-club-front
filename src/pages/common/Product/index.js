@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -9,17 +8,16 @@ const Product = () => {
   const [product, setProduct] = useState();
   const params = useParams();
   const productId = params.id;
-  const basketCounter = useSelector((store) => store.basketCounter);
 
   useEffect(() => {
     axios.post("/products/take", { id: productId }).then((res) => {
       setProduct(res.data[0]);
     });
-  }, []);
+  }, [productId]);
 
   return (
     <>
-      <Header counter={basketCounter > 0 ? basketCounter : false} />
+      <Header />
       <ProductCard product={product} />;
     </>
   );

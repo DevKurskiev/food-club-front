@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import axios from "axios";
+import { useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
+import { Typography } from "@atoms";
 import { Form } from "@molecules";
 import { Page } from "@organisms";
 
@@ -11,9 +13,12 @@ import { registrationFormData } from "./helpers";
 
 function Registration() {
   const navigate = useNavigate();
+
+  const currentUser = useSelector((store) => store.currentUser);
+
   const [isError, setIsError] = useState([]);
   const [formData, setFormData] = useState(registrationFormData);
-  const [userData, setUserData] = useState({
+  const [userData] = useState({
     lastName: "",
     firstName: "",
     email: "",
@@ -27,6 +32,7 @@ function Registration() {
 
     toast.dismiss();
 
+    // eslint-disable-next-line array-callback-return
     Object.keys(userData).some((el) => {
       let index = isError.indexOf(el);
 
@@ -50,16 +56,19 @@ function Registration() {
     });
 
     isError.length === 0
-      ? axios.post("/users/create", userData) &&
+      ? axios.post("/users/update", {
+          ...userData,
+          userId: currentUser?.userId,
+        }) &&
         toast.success("Вы успешно зарегистрировались!") &&
-        navigate("/products")
+        navigate("/login")
       : toast.error("Заполните все поля!");
   };
 
   return (
     <>
       <ToastContainer />
-      <Page $row>
+      <Page $column $center>
         <Form
           options={formData}
           onClick={handleCreateUser}
@@ -67,6 +76,9 @@ function Registration() {
           title="Зарегистрироваться"
           dataValue={userData}
         />
+        <Typography.Paragraph>
+          Уже есть аккаунт? <a href="/login">Войти!</a>
+        </Typography.Paragraph>
       </Page>
     </>
   );

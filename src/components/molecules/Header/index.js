@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
 
 import { Icon, Search, Button } from "@atoms";
 import useWindowDimensions from "@hooks/useWindowDimensions";
-import * as constants from "@store/constants/product";
+import * as constants from "@store/constants/index";
 
 import { HeaderContainer, HeaderItem, HeaderIconParent } from "./styles";
 
 const Header = ({ isNotSearch, counter, ...props }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const product = useSelector((store) => store.chooseProduct);
   const currentUser = useSelector((store) => store.currentUser);
   const { isMobile } = useWindowDimensions();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const [basketCounter, setBasketCounter] = useState(0);
 
   const handleProducts = (e) => {
     dispatch({
@@ -22,6 +22,13 @@ const Header = ({ isNotSearch, counter, ...props }) => {
       payload: { ...product, name: e.target.value },
     });
   };
+
+  useEffect(() => {
+    setBasketCounter(
+      currentUser?.basket?.length > 0 ? currentUser?.basket.length : false
+    );
+    console.log("Header", currentUser);
+  }, [currentUser]);
 
   return (
     <HeaderContainer isMobile={isMobile} isNotSearch={isNotSearch}>
@@ -38,11 +45,11 @@ const Header = ({ isNotSearch, counter, ...props }) => {
       <HeaderItem $flex>
         <Button
           buttonText={
-            currentUser.lastName ? currentUser.lastName : !isMobile && "Войти"
+            currentUser?.lastName ? currentUser?.lastName : !isMobile && "Войти"
           }
-          iconName={!currentUser.lastName && isMobile && "profile"}
+          iconName={!currentUser?.lastName && isMobile && "profile"}
           iconSize={25}
-          onClick={() => !currentUser.lastName && navigate("/login")}
+          onClick={() => !currentUser?.lastName && navigate("/login")}
         />
         <Button
           buttonText={!isMobile && "Корзина"}
@@ -50,7 +57,7 @@ const Header = ({ isNotSearch, counter, ...props }) => {
           iconName={isMobile && "basket"}
           iconSize={25}
           onClick={() => navigate("/basket")}
-          counter={counter}
+          counter={basketCounter}
         />
       </HeaderItem>
     </HeaderContainer>

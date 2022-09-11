@@ -14,7 +14,6 @@ import {
 
 function ProductCards({ products }) {
   const navigate = useNavigate();
-
   const isProducts = products.items.length;
 
   return (

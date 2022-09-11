@@ -1,29 +1,16 @@
-export const productItemsType = (productType) => {
-  return [
-    {
-      type: "all",
-      value: "Все",
-      // checked: productType.category === "all",
-    },
-    {
-      type: "popular",
-      value: "Популярное",
-      // checked: productType.category === "popular",
-    },
-    {
-      type: "meat",
-      value: "Мясное",
-      // checked: productType.category === "meat",
-    },
-    {
-      type: "dessert",
-      value: "Десерты",
-      // checked: productType.category === "dessert",
-    },
-    {
-      type: "drink",
-      value: "Напитки",
-      // checked: productType.category === "drink",
-    },
-  ];
+import axios from "axios";
+import * as constants from "@store/constants/index";
+
+export const handleUpdateToBasket = (e, id, action, currentUser, dispatch) => {
+  // action === "added" &&
+  //   axios
+  //     .post("/users/added-to-basket", { userId: currentUser?.userId, id })
+  //     .then((res) => {
+  // dispatch({
+  //   type: constants.CURRENTUSER,
+  //   payload: res?.data,
+  // });
+  //     });
+
+  console.log("currentUser", currentUser);
 };
