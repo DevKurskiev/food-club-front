@@ -19,6 +19,7 @@ export const PageContainer = styled.div`
       display: flex;
       height: 100%;
       align-items: center;
+      justify-content: center;
     `}
 
   ${(props) =>
@@ -27,5 +28,12 @@ export const PageContainer = styled.div`
       display: flex;
       flex-direction: row;
       justify-content: space-around;
+    `}
+  
+  ${(props) =>
+    props.$column &&
+    css`
+      display: flex;
+      flex-direction: column;
     `}
 `;

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 import useWindowDimensions from "@hooks/useWindowDimensions";
-import * as constants from "@store/constants/product";
+import * as constants from "@store/constants/index";
 import { Select, Search } from "@atoms";
 import { Header, ProductCards } from "@molecules";
 import { Page } from "@organisms";
@@ -12,8 +12,8 @@ import { productCategory } from "./helpers";
 const Main = () => {
   const { isMobile } = useWindowDimensions();
   const [productData, setProductData] = useState({ items: [], loader: true });
+
   const product = useSelector((store) => store.chooseProduct);
-  const basketCounter = useSelector((store) => store.basketCounter);
   const dispatch = useDispatch();
 
   const handleProducts = (e) => {
@@ -44,24 +44,13 @@ const Main = () => {
         loader: false,
       });
     });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
-
-  useEffect(() => {
-    axios.get("/basket/get-from-basket").then((res) => {
-      let counter = res.data[0].inBasket
-        .map((el) => el.quantity)
-        .reduce((el, x) => el + x);
-
-      dispatch({
-        type: constants.BASKETCOUNTER,
-        payload: counter,
-      });
-    });
-  }, []);
 
   return (
     <Page>
-      <Header counter={basketCounter > 0 ? basketCounter : false} />
+      <Header />
       <Select
         onClick={handleProducts}
         mt

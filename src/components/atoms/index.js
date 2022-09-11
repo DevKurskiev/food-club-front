@@ -4,4 +4,4 @@ export { default as Button } from "./Button";
 export { default as Select } from "./Select";
 export { default as NotFound } from "./NotFound";
 export { default as Loader } from "./Loader";
-export { default as Title } from "./Title";
+export { default as Typography } from "./Typography";

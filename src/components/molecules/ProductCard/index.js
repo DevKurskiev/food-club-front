@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 
 import { Search, Select, Loader, Button } from "@atoms";
-import * as constants from "@store/constants/product";
+import * as constants from "@store/constants/index";
 import useWindowDimensions from "@hooks/useWindowDimensions";
 
 import {
@@ -27,30 +27,22 @@ const ProductCard = ({ product }) => {
   const params = useParams();
   const dispatch = useDispatch();
   const productType = useSelector((store) => store.chooseProductType);
+  const currentUser = useSelector((store) => store.currentUser);
   const { isMobile } = useWindowDimensions();
   const productId = params.id;
 
   const [productItemsData, setProductItemsData] = useState();
-  const [basketData, setBasketData] = useState([]);
+  const [basketData, setBasketData] = useState(currentUser?.basket || []);
 
   useEffect(() => {
     axios.post("/products/take/find-items", { id: productId }).then((res) => {
       setProductItemsData(res.data[0].items);
     });
+  }, [productId]);
 
-    axios.get("/basket/get-from-basket").then((res) => {
-      setBasketData(res.data[0].inBasket);
-
-      let counter = res.data[0].inBasket
-        .map((el) => el.quantity)
-        .reduce((el, x) => el + x);
-
-      dispatch({
-        type: constants.BASKETCOUNTER,
-        payload: counter,
-      });
-    });
-  }, []);
+  useEffect(() => {
+    setBasketData(currentUser?.basket);
+  }, [currentUser]);
 
   const handleProductsType = (e) => {
     dispatch({
@@ -63,52 +55,41 @@ const ProductCard = ({ product }) => {
   };
 
   const handleAddedToBasket = async (id) => {
-    setBasketData([...basketData, { id: [id], quantity: 1 }]);
-
-    await axios.post("/basket/added-to-basket", {
-      id,
-      quantity: 1,
-    });
-
-    axios.get("/basket/get-from-basket").then((res) => {
-      let counter = res.data[0].inBasket
-        .map((el) => el.quantity)
-        .reduce((el, x) => el + x);
-
-      dispatch({
-        type: constants.BASKETCOUNTER,
-        payload: counter,
+    axios
+      .post("/users/added-to-basket", { userId: currentUser?.userId, id })
+      .then((res) => {
+        dispatch({
+          type: constants.CURRENTUSER,
+          payload: res.data,
+        });
+        setBasketData(res.data.basket);
       });
-    });
   };
 
-  const handleUpadatequantity = async (e, id) => {
-    const quantity = basketData.find((item) => item.id.includes(id))?.quantity;
-    const type = e.target.dataset.type;
+  const handleUpadateQuantity = async (e, id, action) => {
+    const quantity =
+      action === "increment"
+        ? basketData.find((el) => el.id === id).quantity + 1
+        : basketData.find((el) => el.id === id).quantity - 1;
 
-    await axios.post("/basket/update-quantity", {
-      id: id,
-      quantity:
-        type === "increment"
-          ? quantity + 1
-          : type === "decrement" && quantity - 1,
-    });
+    console.log(action, quantity);
 
-    axios.get("/basket/get-from-basket").then((res) => {
-      setBasketData(res.data[0].inBasket);
+    axios
+      .post("/users/update-quantity", {
+        userId: currentUser?.userId,
+        id,
+        quantity,
+      })
+      .then((res) => {
+        dispatch({
+          type: constants.CURRENTUSER,
+          payload: res.data,
+        });
 
-      let counter =
-        res.data[0].inBasket.length > 0
-          ? res.data[0].inBasket
-              .map((el) => el.quantity)
-              .reduce((el, x) => el + x)
-          : 0;
-
-      dispatch({
-        type: constants.BASKETCOUNTER,
-        payload: counter,
+        setBasketData(res.data.basket);
       });
-    });
+
+    console.log(action, quantity);
   };
 
   return !product ? (
@@ -152,20 +133,25 @@ const ProductCard = ({ product }) => {
                       />
                       <Button
                         buttonText="+"
-                        data-type="increment"
                         hoverNone
                         $none={!basketData?.some((i) => i?.id?.includes(el.id))}
-                        onClick={(e) => handleUpadatequantity(e, el.id)}
+                        onClick={(e) =>
+                          handleUpadateQuantity(e, el.id, "increment")
+                        }
                       />
                       <ProductCardItemQuantity>
-                        {basketData.find((i) => i.id.includes(el.id))?.quantity}
+                        {
+                          basketData?.find((i) => i.id.includes(el.id))
+                            ?.quantity
+                        }
                       </ProductCardItemQuantity>
                       <Button
                         buttonText="-"
-                        data-type="decrement"
                         hoverNone
                         $none={!basketData?.some((i) => i?.id?.includes(el.id))}
-                        onClick={(e) => handleUpadatequantity(e, el.id)}
+                        onClick={(e) =>
+                          handleUpadateQuantity(e, el.id, "decrement")
+                        }
                       />
                     </ProductCardItemBasket>
                   </ProductCardItemBasketImgParent>
@@ -175,6 +161,7 @@ const ProductCard = ({ product }) => {
                 </ProductCardItem>
               );
             }
+            return null;
           })
         ) : (
           <Loader center={isMobile} />

@@ -1,12 +1,11 @@
 import { createStore } from "redux";
 
-import * as constants from "@store/constants/product";
+import * as constants from "@store/constants/index";
 
 const initialState = {
   currentUser: {},
   chooseProduct: { category: "cafe", name: "" },
   chooseProductType: { category: "all" },
-  basketCounter: 0,
 };
 
 function myReducer(state = initialState, action) {
@@ -27,11 +26,6 @@ function myReducer(state = initialState, action) {
       return {
         ...state,
         chooseProductType: payload,
-      };
-    case constants.BASKETCOUNTER:
-      return {
-        ...state,
-        basketCounter: payload,
       };
 
     default:

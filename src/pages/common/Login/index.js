@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import bcrypt from "bcryptjs";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import * as constants from "@store/constants/product";
+import { Typography } from "@atoms";
 import { Form } from "@molecules";
 import { Page } from "@organisms";
 import { loginFormData } from "./helpers";
@@ -14,12 +13,11 @@ import { loginFormData } from "./helpers";
 function Login() {
   const [formData, setFormData] = useState(loginFormData);
   const [isError, setIsError] = useState([]);
-  const [userData, setUserData] = useState({
+  const [userData] = useState({
     email: "",
     password: "",
   });
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleCreateUser = (userData) => {
@@ -28,6 +26,7 @@ function Login() {
 
     toast.dismiss();
 
+    // eslint-disable-next-line array-callback-return
     Object.keys(userData).some((el) => {
       let index = isError.indexOf(el);
 
@@ -47,13 +46,9 @@ function Login() {
 
     isError.length === 0
       ? axios.post("/users/login", userData).then((res) => {
-          res.data.length > 0 &&
-          bcrypt.compareSync(userData.password, res.data[0].password)
-            ? dispatch({
-                type: constants.CURRENTUSER,
-                payload: res.data[0],
-              }) &&
-              navigate("/products") &&
+          !!res.data > 0 &&
+          bcrypt.compareSync(userData.password, res.data.password)
+            ? navigate("/products") &&
               toast.success("Вы успешно вошли в аккаунт!")
             : toast.error("Неправильный email или пароль!");
         })
@@ -63,7 +58,7 @@ function Login() {
   return (
     <>
       <ToastContainer />
-      <Page $row $center>
+      <Page $column $center>
         <Form
           options={formData}
           onClick={handleCreateUser}
@@ -71,6 +66,9 @@ function Login() {
           title="Вход"
           dataValue={userData}
         />
+        <Typography.Paragraph>
+          Нет аккаунта? <a href="/registration">Зарегистрируйтесь!</a>
+        </Typography.Paragraph>
       </Page>
     </>
   );
