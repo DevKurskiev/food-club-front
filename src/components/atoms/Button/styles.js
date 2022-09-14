@@ -34,7 +34,7 @@ export const ButtonItem = styled.button`
       color: ${theme.palette.primary};
 
       &&:hover {
-        border: 1px solid ${theme.palette.primary};
+        border: 1px solid ${theme.palette.default};
         background: ${theme.palette.primary};
         color: ${theme.palette.default};
       }
