@@ -29,6 +29,7 @@ const Header = ({ isNotSearch, counter, ...props }) => {
     );
     let count = 0;
 
+    // eslint-disable-next-line array-callback-return
     currentUser?.basket.map((el) => {
       count += el.quantity;
       setBasketCounter(count);
@@ -54,7 +55,9 @@ const Header = ({ isNotSearch, counter, ...props }) => {
           }
           iconName={!currentUser?.lastName && isMobile && "profile"}
           iconSize={25}
-          onClick={() => !currentUser?.lastName && navigate("/login")}
+          onClick={() =>
+            currentUser?.lastName ? navigate("/profile") : navigate("/login")
+          }
         />
         <Button
           buttonText={!isMobile && "Корзина"}

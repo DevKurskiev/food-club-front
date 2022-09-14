@@ -6,6 +6,7 @@ import { ProductCard, Header } from "@molecules";
 
 const Product = () => {
   const [product, setProduct] = useState();
+  const [productItemsData, setProductItemsData] = useState();
   const params = useParams();
   const productId = params.id;
 
@@ -13,12 +14,20 @@ const Product = () => {
     axios.post("/products/take", { id: productId }).then((res) => {
       setProduct(res.data[0]);
     });
+    axios.post("/products/take/find-items", { id: productId }).then((res) => {
+      setProductItemsData(res.data[0].items);
+    });
   }, [productId]);
 
   return (
     <>
       <Header />
-      <ProductCard product={product} />;
+      <ProductCard
+        center
+        product={product}
+        productItemsData={productItemsData}
+      />
+      ;
     </>
   );
 };

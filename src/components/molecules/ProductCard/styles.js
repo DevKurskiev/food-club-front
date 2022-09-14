@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { theme } from "@theme";
 import breakpoint from "@utils/media";
@@ -6,6 +6,12 @@ import breakpoint from "@utils/media";
 export const ProductCardContainer = styled.div`
   width: 100%;
   padding: 100px 13px 0 13px;
+
+  ${(props) =>
+    props.$fewPadding &&
+    css`
+      padding: 5% 0;
+    `}
 `;
 
 export const ProductCardHeader = styled.div`
@@ -66,7 +72,7 @@ export const ProductCardItemsParent = styled.div`
 
 export const ProductCardItem = styled.div`
   border-radius: 10px;
-  margin: 26px auto;
+  margin: 26px ${(props) => props.center && "auto"};
   width: 350px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   cursor: pointer;
