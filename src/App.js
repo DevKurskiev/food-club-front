@@ -8,7 +8,7 @@ import * as constants from "@store/constants/index";
 
 import { GlobalStyle } from "./globalStyles";
 
-import { Main, Product, Registration, Login } from "@pages/common";
+import { Main, Product, Registration, Login, Basket } from "@pages/common";
 import { NotFound } from "@atoms";
 
 function App() {
@@ -19,6 +19,7 @@ function App() {
 
   useEffect(() => {
     cookies.foodClubUserToken === undefined && axios.post("/users/create");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (
@@ -40,6 +41,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/products" element={<Main />} />
         <Route path="/product/:id" element={<Product />} />
+        <Route path="/basket" element={<Basket />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Fragment>

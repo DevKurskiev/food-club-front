@@ -60,7 +60,7 @@ const Main = () => {
 
       {isMobile && <Search onChange={handleSearchProducts} />}
 
-      <ProductCards products={productData} />
+      <ProductCards center products={productData} />
     </Page>
   );
 };

@@ -36,4 +36,10 @@ export const PageContainer = styled.div`
       display: flex;
       flex-direction: column;
     `}
+  
+  ${(props) =>
+    props.$withoutPadding &&
+    css`
+      padding: 0;
+    `}
 `;

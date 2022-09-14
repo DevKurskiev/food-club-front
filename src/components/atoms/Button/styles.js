@@ -7,6 +7,14 @@ export const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   position: relative;
+
+  ${(props) =>
+    props.$fixToRightBottom &&
+    css`
+      position: absolute;
+      right: 5%;
+      bottom: 5%;
+    `}
 `;
 
 export const ButtonItem = styled.button`

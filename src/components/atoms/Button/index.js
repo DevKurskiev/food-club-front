@@ -4,9 +4,16 @@ import { Icon } from "@atoms";
 
 import { ButtonContainer, ButtonItem, ButtonItemCounter } from "./styles";
 
-const Button = ({ buttonText, iconName, iconSize, counter, ...rest }) => {
+const Button = ({
+  buttonText,
+  iconName,
+  iconSize,
+  counter,
+  onClick,
+  ...rest
+}) => {
   return (
-    <ButtonContainer>
+    <ButtonContainer onClick={onClick} {...rest}>
       {counter && <ButtonItemCounter>{counter}</ButtonItemCounter>}
       <ButtonItem {...rest}>
         {buttonText}

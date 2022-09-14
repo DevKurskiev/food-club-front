@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
 import axios from "axios";
 
 import { Search, Select, Loader, Button } from "@atoms";
@@ -23,22 +22,18 @@ import {
   ProductCardItemQuantity,
 } from "./styles";
 
-const ProductCard = ({ product }) => {
-  const params = useParams();
+const ProductCard = ({
+  product,
+  productItemsData,
+  isBasket,
+  setProductItemsData,
+  ...rest
+}) => {
   const dispatch = useDispatch();
   const productType = useSelector((store) => store.chooseProductType);
   const currentUser = useSelector((store) => store.currentUser);
   const { isMobile } = useWindowDimensions();
-  const productId = params.id;
-
-  const [productItemsData, setProductItemsData] = useState();
   const [basketData, setBasketData] = useState(currentUser?.basket || []);
-
-  useEffect(() => {
-    axios.post("/products/take/find-items", { id: productId }).then((res) => {
-      setProductItemsData(res.data[0].items);
-    });
-  }, [productId]);
 
   useEffect(() => {
     setBasketData(currentUser?.basket);
@@ -54,9 +49,13 @@ const ProductCard = ({ product }) => {
     });
   };
 
-  const handleAddedToBasket = async (id) => {
+  const handleAddedToBasket = async (id, payment) => {
     axios
-      .post("/users/added-to-basket", { userId: currentUser?.userId, id })
+      .post("/users/added-to-basket", {
+        userId: currentUser?.userId,
+        id,
+        payment: +payment,
+      })
       .then((res) => {
         dispatch({
           type: constants.CURRENTUSER,
@@ -64,19 +63,23 @@ const ProductCard = ({ product }) => {
         });
         setBasketData(res.data.basket);
       });
+
+    console.log("currentUser?.userId", currentUser?.userId);
   };
 
-  const handleUpadateQuantity = async (e, id, action) => {
+  const handleUpadateQuantity = async (e, id, action, payment) => {
+    const thisProduct = basketData.find((el) => el.id === id);
     const quantity =
       action === "increment"
-        ? basketData.find((el) => el.id === id).quantity + 1
-        : basketData.find((el) => el.id === id).quantity - 1;
+        ? thisProduct.quantity + 1
+        : thisProduct.quantity - 1;
 
     axios
       .post("/users/update-quantity", {
         userId: currentUser?.userId,
         id,
         quantity,
+        payment: +quantity * +payment,
       })
       .then((res) => {
         dispatch({
@@ -88,35 +91,37 @@ const ProductCard = ({ product }) => {
       });
   };
 
-  return !product ? (
-    <Loader center={isMobile} />
-  ) : (
-    <ProductCardContainer>
-      <ProductCardHeader>
-        <ProductCardHeaderImg src={product.avatar} />
-        <ProductCardHeaderProductInfo>
-          <p>{product.name}</p>
-          <span>{product.title}</span>
-          <span>{product.address}</span>
-        </ProductCardHeaderProductInfo>
-      </ProductCardHeader>
+  return (
+    <ProductCardContainer {...rest}>
+      {product && (
+        <ProductCardHeader>
+          <ProductCardHeaderImg src={product.avatar} />
+          <ProductCardHeaderProductInfo>
+            <p>{product.name}</p>
+            <span>{product.title}</span>
+            <span>{product.address}</span>
+          </ProductCardHeaderProductInfo>
+        </ProductCardHeader>
+      )}
 
-      <Select
-        onClick={handleProductsType}
-        mt
-        small
-        options={product.kinds}
-        checked={productType.category}
-      />
+      {product && (
+        <Select
+          onClick={handleProductsType}
+          mt
+          small
+          options={product.kinds}
+          checked={productType.category}
+        />
+      )}
 
-      {isMobile && <Search />}
+      {isMobile && !isBasket && <Search />}
 
       <ProductCardItemsParent>
         {productItemsData ? (
           productItemsData.map((el, i) => {
             if (el.type?.includes(productType.category)) {
               return (
-                <ProductCardItem key={el.id}>
+                <ProductCardItem key={el.id + i} {...rest}>
                   <ProductCardItemBasketImgParent>
                     <ProductCardItemImg src={el.image} />
                     <ProductCardItemBasket className="opacity">
@@ -124,7 +129,7 @@ const ProductCard = ({ product }) => {
                         iconName="basket"
                         iconSize={25}
                         hoverNone
-                        onClick={(e) => handleAddedToBasket(el.id)}
+                        onClick={() => handleAddedToBasket(el.id, el.price)}
                         $none={basketData?.some((i) => i?.id?.includes(el.id))}
                       />
                       <Button
@@ -132,7 +137,7 @@ const ProductCard = ({ product }) => {
                         hoverNone
                         $none={!basketData?.some((i) => i?.id?.includes(el.id))}
                         onClick={(e) =>
-                          handleUpadateQuantity(e, el.id, "increment")
+                          handleUpadateQuantity(e, el.id, "increment", el.price)
                         }
                       />
                       <ProductCardItemQuantity>
@@ -146,7 +151,7 @@ const ProductCard = ({ product }) => {
                         hoverNone
                         $none={!basketData?.some((i) => i?.id?.includes(el.id))}
                         onClick={(e) =>
-                          handleUpadateQuantity(e, el.id, "decrement")
+                          handleUpadateQuantity(e, el.id, "decrement", el.price)
                         }
                       />
                     </ProductCardItemBasket>
