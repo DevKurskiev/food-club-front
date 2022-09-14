@@ -16,8 +16,10 @@ function From({
   buttonText,
   title,
   dataValue,
+  setDataValue,
   disable,
-  ...props
+  children,
+  ...rest
 }) {
   const [value, setValue] = useState(dataValue || {});
 
@@ -38,6 +40,7 @@ function From({
               value={value.value}
               onChange={(e) => handleChangeInputValue(e, el.name)}
               $error={el.error}
+              placeholder={el.placeholder}
             />
           </FormItem>
         );
@@ -48,7 +51,10 @@ function From({
         buttonText={buttonText}
         onClick={() => onClick(value)}
         $disable={disable}
+        {...rest}
       />
+
+      {children}
     </FormContainer>
   );
 }

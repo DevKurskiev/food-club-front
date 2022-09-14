@@ -4,6 +4,7 @@ import { useCookies } from "react-cookie";
 import { useJwt } from "react-jwt";
 import axios from "axios";
 import { Routes, Route } from "react-router-dom";
+
 import * as constants from "@store/constants/index";
 
 import { GlobalStyle } from "./globalStyles";
@@ -18,7 +19,8 @@ function App() {
   const currentUser = useSelector((store) => store.currentUser);
 
   useEffect(() => {
-    cookies.foodClubUserToken === undefined && axios.post("/users/create");
+    !cookies.foodClubUserToken &&
+      axios.post("/users/create").then(() => window.location.reload());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

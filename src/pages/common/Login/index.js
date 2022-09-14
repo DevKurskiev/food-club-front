@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import bcrypt from "bcryptjs";
 import { ToastContainer, toast } from "react-toastify";
@@ -17,8 +16,6 @@ function Login() {
     email: "",
     password: "",
   });
-
-  const navigate = useNavigate();
 
   const handleCreateUser = (userData) => {
     let inputError = isError;
@@ -39,7 +36,7 @@ function Login() {
 
     setIsError(inputError);
 
-    formDataWithError.forEach((el, i) => {
+    formDataWithError.forEach((el) => {
       el.error = isError.includes(el.name) ? true : false;
       setFormData([...formDataWithError]);
     });
@@ -48,8 +45,7 @@ function Login() {
       ? axios.post("/users/login", userData).then((res) => {
           !!res.data > 0 &&
           bcrypt.compareSync(userData.password, res.data.password)
-            ? navigate("/products") &&
-              toast.success("Вы успешно вошли в аккаунт!")
+            ? (window.location.pathname = "/products")
             : toast.error("Неправильный email или пароль!");
         })
       : toast.error("Заполните все поля!");

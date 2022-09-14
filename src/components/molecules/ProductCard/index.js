@@ -63,8 +63,6 @@ const ProductCard = ({
         });
         setBasketData(res.data.basket);
       });
-
-    console.log("currentUser?.userId", currentUser?.userId);
   };
 
   const handleUpadateQuantity = async (e, id, action, payment) => {
