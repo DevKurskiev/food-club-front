@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Icon, Search, Button } from "@atoms";
 import useWindowDimensions from "@hooks/useWindowDimensions";
+import UseUserRoles from "@hooks/useUserRoles";
 import * as constants from "@store/constants/index";
 
 import { HeaderContainer, HeaderItem, HeaderIconParent } from "./styles";
@@ -14,6 +15,7 @@ const Header = ({ isNotSearch, counter, ...props }) => {
   const product = useSelector((store) => store.chooseProduct);
   const currentUser = useSelector((store) => store.currentUser);
   const { isMobile } = useWindowDimensions();
+  const { isUser } = UseUserRoles();
   const [basketCounter, setBasketCounter] = useState(0);
 
   const handleProducts = (e) => {
@@ -37,13 +39,21 @@ const Header = ({ isNotSearch, counter, ...props }) => {
   }, [currentUser]);
 
   return (
-    <HeaderContainer isMobile={isMobile} isNotSearch={isNotSearch}>
+    <HeaderContainer
+      $flex={!isUser}
+      isMobile={isMobile}
+      isNotSearch={isNotSearch}
+    >
       <HeaderItem>
-        <HeaderIconParent onClick={() => navigate("/products")}>
+        <HeaderIconParent
+          onClick={() =>
+            isUser ? navigate("/products") : navigate("/product")
+          }
+        >
           <Icon name={isMobile ? "logo-mob" : "logo"} />
         </HeaderIconParent>
       </HeaderItem>
-      {!isMobile && !isNotSearch && (
+      {!isMobile && !isNotSearch && isUser && (
         <HeaderItem>
           <Search onChange={handleProducts} />
         </HeaderItem>
@@ -60,11 +70,11 @@ const Header = ({ isNotSearch, counter, ...props }) => {
           }
         />
         <Button
-          buttonText={!isMobile && "Корзина"}
+          buttonText={!isMobile && isUser ? "Корзина" : !isMobile && "Выйти"}
           $light
-          iconName={isMobile && "basket"}
+          iconName={isMobile && isUser ? "basket" : isMobile && "logout"}
           iconSize={25}
-          onClick={() => navigate("/basket")}
+          onClick={() => (isUser ? navigate("/basket") : navigate("/logout"))}
           counter={basketCounter}
         />
       </HeaderItem>

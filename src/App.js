@@ -6,10 +6,19 @@ import axios from "axios";
 import { Routes, Route } from "react-router-dom";
 
 import * as constants from "@store/constants/index";
+import UseUserRoles from "@hooks/useUserRoles";
 
 import { GlobalStyle } from "./globalStyles";
 
-import { Main, Product, Registration, Login, Basket } from "@pages/common";
+import {
+  Main,
+  Product,
+  Registration,
+  Login,
+  Basket,
+  Logout,
+} from "@pages/common";
+import { MainAdmin } from "@pages/admin";
 import { NotFound } from "@atoms";
 
 function App() {
@@ -17,6 +26,7 @@ function App() {
   const [cookies] = useCookies();
   const { decodedToken } = useJwt(cookies.foodClubUserToken);
   const currentUser = useSelector((store) => store.currentUser);
+  const { isUser, isAdmin } = UseUserRoles();
 
   useEffect(() => {
     !cookies.foodClubUserToken &&
@@ -41,9 +51,11 @@ function App() {
       <Routes>
         <Route path="/registration" element={<Registration />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/products" element={<Main />} />
-        <Route path="/product/:id" element={<Product />} />
-        <Route path="/basket" element={<Basket />} />
+        <Route path="/logout" element={<Logout />} />
+        {isUser && <Route path="/products" element={<Main />} />}
+        {isUser && <Route path="/product/:id" element={<Product />} />}
+        {isUser && <Route path="/basket" element={<Basket />} />}
+        {isAdmin && <Route path="/product" element={<MainAdmin />} />}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Fragment>

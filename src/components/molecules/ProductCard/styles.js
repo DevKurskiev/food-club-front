@@ -29,11 +29,41 @@ export const ProductCardHeaderImg = styled.img`
   }
 `;
 
+export const ProductCardImgPlate = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: ${(props) => (props.isProducts ? "178px" : "400px")};
+  border-radius: 10px;
+  background: #dfdfdf;
+  margin: 2% 0 3% 0;
+  cursor: pointer;
+  position: relative;
+
+  p {
+    font-size: ${(props) => (props.isProducts ? "20px" : "36px")};
+
+    @media ${breakpoint.md} {
+      font-size: ${(props) => (props.isProducts ? "16px" : "26px")};
+    }
+    @media ${breakpoint.sm} {
+      font-size: ${(props) => (props.isProducts ? "16px" : "14px")};
+      margin: 10% 0 3% 0;
+    }
+  }
+
+  @media ${breakpoint.sm} {
+    height: ${(props) => (props.isProducts ? "178px" : "200px")};
+    margin: 10% 0 3% 0;
+  }
+`;
+
 export const ProductCardHeaderProductInfo = styled.div`
   background: ${theme.palette.opacity};
   border-radius: 0 50px 0 0;
   position: absolute;
-  bottom: 4px;
+  bottom: 0;
   left: 0;
   padding: 10px;
   color: ${theme.palette.primary};
@@ -56,6 +86,12 @@ export const ProductCardHeaderProductInfo = styled.div`
       font-size: 12px;
     }
   }
+
+  ${(props) =>
+    props.$isAdmin &&
+    css`
+      cursor: pointer;
+    `}
 `;
 
 export const ProductCardItemsParent = styled.div`

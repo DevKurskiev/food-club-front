@@ -5,7 +5,7 @@ import breakpoint from "@utils/media";
 
 export const ButtonContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: ${(props) => (props.jc ? props.jc : "flex-end")};
   position: relative;
 
   ${(props) =>

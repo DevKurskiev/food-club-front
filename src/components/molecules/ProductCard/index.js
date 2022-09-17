@@ -10,6 +10,7 @@ import {
   ProductCardContainer,
   ProductCardHeader,
   ProductCardHeaderImg,
+  ProductCardImgPlate,
   ProductCardHeaderProductInfo,
   ProductCardItemsParent,
   ProductCardItem,
@@ -21,6 +22,41 @@ import {
   ProductCardItemBasketImgParent,
   ProductCardItemQuantity,
 } from "./styles";
+
+const ProductCardAtAdmin = ({
+  product,
+  updateProductImage,
+  updateProductInfo,
+  updateProducts,
+  ...rest
+}) => {
+  return (
+    <ProductCardHeader>
+      <ProductCardImgPlate onClick={updateProductImage}>
+        <p> Нажмите чтобы загрузите фото заведения</p>
+        <ProductCardHeaderProductInfo $isAdmin onClick={updateProductInfo}>
+          Добавить краткое описание
+        </ProductCardHeaderProductInfo>
+      </ProductCardImgPlate>
+
+      <Button
+        $light
+        jc="flex-start"
+        buttonText="Добавить"
+        onClick={(e) => console.log(e.target)}
+      />
+
+      <ProductCardItem {...rest}>
+        <ProductCardImgPlate isProducts onClick={updateProducts}>
+          Нажмите чтобы редактировать
+        </ProductCardImgPlate>
+        <ProductCardItemName>Название</ProductCardItemName>
+        <ProductCardItemWeight>Вес</ProductCardItemWeight>
+        <ProductCardItemPrice>Цена</ProductCardItemPrice>
+      </ProductCardItem>
+    </ProductCardHeader>
+  );
+};
 
 const ProductCard = ({
   product,
@@ -169,5 +205,7 @@ const ProductCard = ({
     </ProductCardContainer>
   );
 };
+
+ProductCard.Admin = ProductCardAtAdmin;
 
 export default ProductCard;
