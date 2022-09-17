@@ -43,9 +43,13 @@ function Login() {
 
     isError.length === 0
       ? axios.post("/users/login", userData).then((res) => {
+          const roles = res.data.roles;
+
           !!res.data > 0 &&
           bcrypt.compareSync(userData.password, res.data.password)
-            ? (window.location.pathname = "/products")
+            ? (window.location.pathname = roles.includes("admin")
+                ? "/product"
+                : "/products")
             : toast.error("Неправильный email или пароль!");
         })
       : toast.error("Заполните все поля!");

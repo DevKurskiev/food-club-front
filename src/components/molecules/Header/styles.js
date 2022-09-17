@@ -19,6 +19,14 @@ export const HeaderContainer = styled.div`
   width: 100%;
   padding: 0 13px;
   z-index: 99;
+
+  ${(props) =>
+    props.$flex &&
+    css`
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    `}
 `;
 
 export const HeaderItem = styled.div`
