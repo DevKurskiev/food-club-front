@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { UploadButton } from "react-uploader";
+import { Uploader } from "uploader";
 import axios from "axios";
 
 import { Search, Select, Loader, Button } from "@atoms";
@@ -28,22 +30,43 @@ const ProductCardAtAdmin = ({
   updateProductImage,
   updateProductInfo,
   updateProducts,
+  setMyProductData,
+  myProductData,
+  addedKinds,
   ...rest
 }) => {
+  const uploader = new Uploader({
+    apiKey: "free",
+  });
+
   return (
     <ProductCardHeader>
-      <ProductCardImgPlate onClick={updateProductImage}>
-        <p> Нажмите чтобы загрузите фото заведения</p>
-        <ProductCardHeaderProductInfo $isAdmin onClick={updateProductInfo}>
-          Добавить краткое описание
-        </ProductCardHeaderProductInfo>
-      </ProductCardImgPlate>
+      <UploadButton
+        uploader={uploader} // Required.
+        SameSite={false}
+        onComplete={(files) => {
+          if (files.length !== 0) {
+            files.map((f) =>
+              setMyProductData({ ...myProductData, avatar: f.fileUrl })
+            );
+          }
+        }}
+      >
+        {({ onClick }) => (
+          <ProductCardImgPlate onClick={onClick}>
+            <p> Нажмите чтобы загрузите фото заведения</p>
+            <ProductCardHeaderProductInfo $isAdmin onClick={updateProductInfo}>
+              Добавить краткое описание
+            </ProductCardHeaderProductInfo>
+          </ProductCardImgPlate>
+        )}
+      </UploadButton>
 
       <Button
         $light
         jc="flex-start"
         buttonText="Добавить"
-        onClick={(e) => console.log(e.target)}
+        onClick={addedKinds}
       />
 
       <ProductCardItem {...rest}>
