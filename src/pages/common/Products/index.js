@@ -9,22 +9,11 @@ import { Header, ProductCards } from "@molecules";
 import { Page } from "@organisms";
 import { productCategory } from "./helpers";
 
-const Main = () => {
-  const { isMobile } = useWindowDimensions();
-  const [productData, setProductData] = useState({ items: [], loader: true });
-
+const Products = () => {
   const product = useSelector((store) => store.chooseProduct);
   const dispatch = useDispatch();
-
-  const handleProducts = (e) => {
-    dispatch({
-      type: constants.PRODUCT,
-      payload: {
-        ...product,
-        category: e.target.dataset.type,
-      },
-    });
-  };
+  const { isMobile } = useWindowDimensions();
+  const [productData, setProductData] = useState({ items: [], loader: true });
 
   const handleSearchProducts = (e) => {
     dispatch({
@@ -34,10 +23,6 @@ const Main = () => {
   };
 
   useEffect(() => {
-    setProductData({
-      ...productData,
-      loader: true,
-    });
     axios.post("/products/take", product).then((res) => {
       setProductData({
         items: res.data,
@@ -50,9 +35,8 @@ const Main = () => {
 
   return (
     <Page>
-      <Header />
+      <Header isNotSearch={false} />
       <Select
-        onClick={handleProducts}
         mt
         options={productCategory(product)}
         checked={product.category}
@@ -65,4 +49,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default Products;

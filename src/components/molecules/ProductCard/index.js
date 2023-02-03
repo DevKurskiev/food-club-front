@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { UploadButton } from "react-uploader";
-import { Uploader } from "uploader";
 import axios from "axios";
 
-import { Search, Select, Loader, Button } from "@atoms";
+import { Select, Loader, Button } from "@atoms";
 import * as constants from "@store/constants/index";
 import useWindowDimensions from "@hooks/useWindowDimensions";
 
@@ -12,7 +10,6 @@ import {
   ProductCardContainer,
   ProductCardHeader,
   ProductCardHeaderImg,
-  ProductCardImgPlate,
   ProductCardHeaderProductInfo,
   ProductCardItemsParent,
   ProductCardItem,
@@ -25,62 +22,6 @@ import {
   ProductCardItemQuantity,
 } from "./styles";
 
-const ProductCardAtAdmin = ({
-  product,
-  updateProductImage,
-  updateProductInfo,
-  updateProducts,
-  setMyProductData,
-  myProductData,
-  addedKinds,
-  ...rest
-}) => {
-  const uploader = new Uploader({
-    apiKey: "free",
-  });
-
-  return (
-    <ProductCardHeader>
-      <UploadButton
-        uploader={uploader} // Required.
-        SameSite={false}
-        onComplete={(files) => {
-          if (files.length !== 0) {
-            files.map((f) =>
-              setMyProductData({ ...myProductData, avatar: f.fileUrl })
-            );
-          }
-        }}
-      >
-        {({ onClick }) => (
-          <ProductCardImgPlate onClick={onClick}>
-            <p> Нажмите чтобы загрузите фото заведения</p>
-            <ProductCardHeaderProductInfo $isAdmin onClick={updateProductInfo}>
-              Добавить краткое описание
-            </ProductCardHeaderProductInfo>
-          </ProductCardImgPlate>
-        )}
-      </UploadButton>
-
-      <Button
-        $light
-        jc="flex-start"
-        buttonText="Добавить"
-        onClick={addedKinds}
-      />
-
-      <ProductCardItem {...rest}>
-        <ProductCardImgPlate isProducts onClick={updateProducts}>
-          Нажмите чтобы редактировать
-        </ProductCardImgPlate>
-        <ProductCardItemName>Название</ProductCardItemName>
-        <ProductCardItemWeight>Вес</ProductCardItemWeight>
-        <ProductCardItemPrice>Цена</ProductCardItemPrice>
-      </ProductCardItem>
-    </ProductCardHeader>
-  );
-};
-
 const ProductCard = ({
   product,
   productItemsData,
@@ -89,9 +30,9 @@ const ProductCard = ({
   ...rest
 }) => {
   const dispatch = useDispatch();
-  const productType = useSelector((store) => store.chooseProductType);
-  const currentUser = useSelector((store) => store.currentUser);
   const { isMobile } = useWindowDimensions();
+  const currentUser = useSelector((store) => store.currentUser);
+  const productType = useSelector((store) => store.chooseProductType);
   const [basketData, setBasketData] = useState(currentUser?.basket || []);
 
   useEffect(() => {
@@ -109,43 +50,29 @@ const ProductCard = ({
   };
 
   const handleAddedToBasket = async (id, payment) => {
-    axios
-      .post("/users/added-to-basket", {
-        userId: currentUser?.userId,
-        id,
-        payment: +payment,
-      })
-      .then((res) => {
-        dispatch({
-          type: constants.CURRENTUSER,
-          payload: res.data,
+    if (currentUser) {
+      await axios
+        .put("/users/added-to-basket", {
+          userId: currentUser.userId,
+          id,
+          payment: +payment,
+        })
+        .then((res) => {
+          dispatch({
+            type: constants.CURRENTUSER,
+            payload: res.data,
+          });
+          setBasketData(res.data.basket);
         });
-        setBasketData(res.data.basket);
-      });
+    }
   };
 
-  const handleUpadateQuantity = async (e, id, action, payment) => {
-    const thisProduct = basketData.find((el) => el.id === id);
-    const quantity =
-      action === "increment"
-        ? thisProduct.quantity + 1
-        : thisProduct.quantity - 1;
-
-    axios
-      .post("/users/update-quantity", {
-        userId: currentUser?.userId,
-        id,
-        quantity,
-        payment: +quantity * +payment,
-      })
-      .then((res) => {
-        dispatch({
-          type: constants.CURRENTUSER,
-          payload: res.data,
-        });
-
-        setBasketData(res.data.basket);
-      });
+  const handleUpadateQuantity = async (id, action) => {
+    await axios.put("/users/update-quantity", {
+      userId: currentUser.userId,
+      id,
+      quantity: action,
+    });
   };
 
   return (
@@ -171,8 +98,6 @@ const ProductCard = ({
         />
       )}
 
-      {isMobile && !isBasket && <Search />}
-
       <ProductCardItemsParent>
         {productItemsData ? (
           productItemsData.map((el, i) => {
@@ -193,9 +118,7 @@ const ProductCard = ({
                         buttonText="+"
                         hoverNone
                         $none={!basketData?.some((i) => i?.id?.includes(el.id))}
-                        onClick={(e) =>
-                          handleUpadateQuantity(e, el.id, "increment", el.price)
-                        }
+                        onClick={() => handleUpadateQuantity(el.id, 1)}
                       />
                       <ProductCardItemQuantity>
                         {
@@ -207,9 +130,7 @@ const ProductCard = ({
                         buttonText="-"
                         hoverNone
                         $none={!basketData?.some((i) => i?.id?.includes(el.id))}
-                        onClick={(e) =>
-                          handleUpadateQuantity(e, el.id, "decrement", el.price)
-                        }
+                        onClick={() => handleUpadateQuantity(el.id, -1)}
                       />
                     </ProductCardItemBasket>
                   </ProductCardItemBasketImgParent>
@@ -228,7 +149,5 @@ const ProductCard = ({
     </ProductCardContainer>
   );
 };
-
-ProductCard.Admin = ProductCardAtAdmin;
 
 export default ProductCard;

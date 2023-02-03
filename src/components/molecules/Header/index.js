@@ -1,41 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { Icon, Search, Button } from "@atoms";
 import useWindowDimensions from "@hooks/useWindowDimensions";
 import UseUserRoles from "@hooks/useUserRoles";
-import * as constants from "@store/constants/index";
+import { countPayment } from "@helpers/countPayment";
 
 import { HeaderContainer, HeaderItem, HeaderIconParent } from "./styles";
 
 const Header = ({ isNotSearch, counter, ...props }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const product = useSelector((store) => store.chooseProduct);
   const currentUser = useSelector((store) => store.currentUser);
   const { isMobile } = useWindowDimensions();
   const { isUser } = UseUserRoles();
-  const [basketCounter, setBasketCounter] = useState(0);
-
-  const handleProducts = (e) => {
-    dispatch({
-      type: constants.PRODUCT,
-      payload: { ...product, name: e.target.value },
-    });
-  };
+  const [count, setBasketCounter] = useState();
 
   useEffect(() => {
-    setBasketCounter(
-      currentUser?.basket?.length > 0 ? currentUser?.basket.length : false
-    );
-    let count = 0;
-
-    // eslint-disable-next-line array-callback-return
-    currentUser?.basket.map((el) => {
-      count += el.quantity;
-      setBasketCounter(count);
-    });
+    if (currentUser) {
+      setBasketCounter(countPayment(currentUser));
+    }
   }, [currentUser]);
 
   return (
@@ -45,37 +29,35 @@ const Header = ({ isNotSearch, counter, ...props }) => {
       isNotSearch={isNotSearch}
     >
       <HeaderItem>
-        <HeaderIconParent
-          onClick={() =>
-            isUser ? navigate("/products") : navigate("/product")
-          }
-        >
+        <HeaderIconParent onClick={() => navigate("/")}>
           <Icon name={isMobile ? "logo-mob" : "logo"} />
         </HeaderIconParent>
       </HeaderItem>
+
       {!isMobile && !isNotSearch && isUser && (
         <HeaderItem>
-          <Search onChange={handleProducts} />
+          <Search />
         </HeaderItem>
       )}
+
       <HeaderItem $flex>
         <Button
           buttonText={
-            currentUser?.lastName ? currentUser?.lastName : !isMobile && "Войти"
+            currentUser?.lastName ? !isMobile && "Выйти" : !isMobile && "Войти"
           }
-          iconName={!currentUser?.lastName && isMobile && "profile"}
+          iconName={isMobile && "logout"}
           iconSize={25}
           onClick={() =>
             currentUser?.lastName ? navigate("/profile") : navigate("/login")
           }
         />
         <Button
-          buttonText={!isMobile && isUser ? "Корзина" : !isMobile && "Выйти"}
+          buttonText={!isMobile && "Корзина"}
           $light
-          iconName={isMobile && isUser ? "basket" : isMobile && "logout"}
+          iconName={isMobile && "basket"}
           iconSize={25}
           onClick={() => (isUser ? navigate("/basket") : navigate("/logout"))}
-          counter={basketCounter}
+          counter={count > 0 && count}
         />
       </HeaderItem>
     </HeaderContainer>

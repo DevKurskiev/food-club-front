@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { theme } from "@theme";
 
 export const ModalContainer = styled.div`
-  display: ${(props) => (props.none ? "none" : "flex")};
+  display: ${(props) => (props.isModalShow ? "flex" : "none")};
   align-items: center;
   justify-content: center;
   position: absolute;

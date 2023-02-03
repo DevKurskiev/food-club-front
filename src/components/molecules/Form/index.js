@@ -42,15 +42,7 @@ function From({
         return (
           <FormItem key={el.name}>
             <FormInputLabel $error={el.error}>{el.label}</FormInputLabel>
-            {el.type !== "file" ? (
-              <FormInput
-                type={el.type}
-                value={value.value}
-                onChange={(e) => handleChangeInputValue(e, el.name)}
-                $error={el.error}
-                placeholder={el.placeholder}
-              />
-            ) : (
+            {el.type === "file" ? (
               <UploadButton
                 uploader={uploader} // Required.
                 SameSite={false}
@@ -64,6 +56,14 @@ function From({
                   <FormInput type={el.type} onClick={onClick} />
                 )}
               </UploadButton>
+            ) : (
+              <FormInput
+                type={el.type}
+                value={value.value}
+                onChange={(e) => handleChangeInputValue(e, el.name)}
+                $error={el.error}
+                placeholder={el.placeholder}
+              />
             )}
           </FormItem>
         );

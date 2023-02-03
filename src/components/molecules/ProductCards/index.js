@@ -14,13 +14,13 @@ import {
 
 function ProductCards({ products }) {
   const navigate = useNavigate();
-  const isProducts = products.items.length;
+  const isProducts = !products.items.length;
 
   return (
     <ProductCardsContainer>
       {products.loader ? (
         <Loader center />
-      ) : !isProducts && !products.loader ? (
+      ) : isProducts && !products.loader ? (
         <ProductCardsNotFound>Ничего не найдено</ProductCardsNotFound>
       ) : (
         products.items.map((el) => {

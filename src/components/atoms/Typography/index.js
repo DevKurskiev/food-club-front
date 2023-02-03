@@ -11,7 +11,7 @@ const Paragraph = ({ children }) => {
 };
 
 const Typography = () => {
-  return;
+  return null;
 };
 
 Typography.Title = Title;

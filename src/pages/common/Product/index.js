@@ -7,21 +7,20 @@ import { ProductCard, Header } from "@molecules";
 const Product = () => {
   const [product, setProduct] = useState();
   const [productItemsData, setProductItemsData] = useState();
-  const params = useParams();
-  const productId = params.id;
+  const { id } = useParams();
 
   useEffect(() => {
-    axios.post("/products/take", { id: productId }).then((res) => {
+    axios.post("/products/take", { id }).then((res) => {
       setProduct(res.data[0]);
     });
-    axios.post("/products/take/find-items", { id: productId }).then((res) => {
+    axios.post("/products/take/find-items", { id }).then((res) => {
       setProductItemsData(res.data[0].items);
     });
-  }, [productId]);
+  }, [id]);
 
   return (
     <>
-      <Header />
+      <Header isNotSearch />
       <ProductCard
         center
         product={product}
