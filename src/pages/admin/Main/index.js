@@ -18,10 +18,6 @@ function MainAdmin() {
   const [addedProductModalHide, setAddedProductModalHide] = useState(true);
   const [addedKindsModalHide, setAddedKindsModalHide] = useState(true);
 
-  useEffect(() => {
-    console.log("myProductData", myProductData);
-  }, [myProductData]);
-
   const handleAddedProduct = () => {
     let isEmpty;
     toast.dismiss();

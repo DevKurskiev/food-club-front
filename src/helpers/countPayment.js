@@ -1,7 +1,7 @@
 export const countPayment = (currentUser) => {
   let count = 0;
 
-  currentUser.basket.forEach((el) => {
+  currentUser.basket?.items.forEach((el) => {
     count += el.payment * (el.quantity || 1);
   });
 

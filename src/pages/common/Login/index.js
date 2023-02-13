@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
 
 import { Typography } from "@atoms";
 import { Form } from "@molecules";
@@ -13,14 +13,20 @@ function Login() {
     password: "",
   });
 
-  const handleLoginUser = (userData) => {
+  const handleLoginUser = async (userData) => {
     let isError = Object.values(userData).includes("");
 
     if (isError) {
       toast.error("Заполните все поля!");
     } else {
-      axios.post("users/login", userData);
-      window.location.replace("/products");
+      await axios.post("users/login", userData).then((res) => {
+        if (res.data.error === null) {
+          localStorage.setItem("foodClubUserId", res.data.userId);
+          window.location.replace("/products");
+        } else {
+          toast.error(res.data.error);
+        }
+      });
     }
   };
 

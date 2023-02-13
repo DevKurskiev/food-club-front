@@ -48,7 +48,7 @@ const Header = ({ isNotSearch, counter, ...props }) => {
           iconName={isMobile && "logout"}
           iconSize={25}
           onClick={() =>
-            currentUser?.lastName ? navigate("/profile") : navigate("/login")
+            currentUser?.lastName ? navigate("/logout") : navigate("/login")
           }
         />
         <Button

@@ -20,7 +20,6 @@ const Search = () => {
       type: constants.PRODUCT,
       payload: { ...product, name: e.target.value },
     });
-    console.log(product);
   };
 
   return (

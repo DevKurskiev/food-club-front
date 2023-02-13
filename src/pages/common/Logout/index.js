@@ -3,7 +3,8 @@ import axios from "axios";
 
 function Logout() {
   useEffect(() => {
-    axios.get("/users/logout").then(() => (window.location.href = "/products"));
+    localStorage.removeItem('foodClubUserId')
+    window.location.href = "/products"
   }, []);
 
   return;

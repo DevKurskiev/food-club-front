@@ -40,6 +40,12 @@ const Products = () => {
         mt
         options={productCategory(product)}
         checked={product.category}
+        onClick={(e) => {
+          dispatch({
+            type: constants.PRODUCT,
+            payload: { ...product, category: e.currentTarget.dataset.type },
+          });
+        }}
       />
 
       {isMobile && <Search onChange={handleSearchProducts} />}

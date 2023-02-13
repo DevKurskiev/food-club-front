@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 
 import { Select, Loader, Button } from "@atoms";
@@ -27,16 +28,20 @@ const ProductCard = ({
   productItemsData,
   isBasket,
   setProductItemsData,
+  setDisableAddedProduct,
   ...rest
 }) => {
+  const { cafeId } = useParams();
   const dispatch = useDispatch();
   const { isMobile } = useWindowDimensions();
   const currentUser = useSelector((store) => store.currentUser);
   const productType = useSelector((store) => store.chooseProductType);
-  const [basketData, setBasketData] = useState(currentUser?.basket || []);
+  const [basketData, setBasketData] = useState(
+    currentUser?.basket?.items || []
+  );
 
   useEffect(() => {
-    setBasketData(currentUser?.basket);
+    setBasketData(currentUser?.basket?.items);
   }, [currentUser]);
 
   const handleProductsType = (e) => {
@@ -50,12 +55,17 @@ const ProductCard = ({
   };
 
   const handleAddedToBasket = async (id, payment) => {
-    if (currentUser) {
+    if (
+      currentUser &&
+      (currentUser.basket.cafeId === cafeId ||
+        currentUser.basket.cafeId === null)
+    ) {
       await axios
         .put("/users/added-to-basket", {
           userId: currentUser.userId,
-          id,
           payment: +payment,
+          cafeId,
+          id,
         })
         .then((res) => {
           dispatch({
@@ -64,15 +74,26 @@ const ProductCard = ({
           });
           setBasketData(res.data.basket);
         });
+      setDisableAddedProduct(false);
+    } else {
+      setDisableAddedProduct(true);
     }
   };
 
-  const handleUpadateQuantity = async (id, action) => {
-    await axios.put("/users/update-quantity", {
-      userId: currentUser.userId,
-      id,
-      quantity: action,
-    });
+  const handleUpadateQuantity = async (id, quantity) => {
+    await axios
+      .put("/users/update-quantity", {
+        userId: currentUser.userId,
+        id,
+        quantity,
+      })
+      .then((res) => {
+        dispatch({
+          type: constants.CURRENTUSER,
+          payload: res.data,
+        });
+        setBasketData(res.data.basket);
+      });
   };
 
   return (
@@ -117,7 +138,11 @@ const ProductCard = ({
                       <Button
                         buttonText="+"
                         hoverNone
-                        $none={!basketData?.some((i) => i?.id?.includes(el.id))}
+                        $none={
+                          !basketData?.some(
+                            (i) => i?.id?.includes(el.id) && i?.quantity > 0
+                          )
+                        }
                         onClick={() => handleUpadateQuantity(el.id, 1)}
                       />
                       <ProductCardItemQuantity>
@@ -129,7 +154,11 @@ const ProductCard = ({
                       <Button
                         buttonText="-"
                         hoverNone
-                        $none={!basketData?.some((i) => i?.id?.includes(el.id))}
+                        $none={
+                          !basketData?.some(
+                            (i) => i?.id?.includes(el.id) && i?.quantity > 0
+                          )
+                        }
                         onClick={() => handleUpadateQuantity(el.id, -1)}
                       />
                     </ProductCardItemBasket>
