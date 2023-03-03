@@ -2,7 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8081/",
+  "proxy": "http://89.108.81.191:8081/",
   "allowedHosts": [
     "89.108.81.191"
   ],
