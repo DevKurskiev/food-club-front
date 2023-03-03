@@ -2,10 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://89.108.81.191:8081/api",
-  "allowedHosts": [
-    "89.108.81.191"
-  ],
+  "proxy": "http://localhost:8081/api",
   "dependencies": {
     "@craco/craco": "^6.4.3",
     "@testing-library/jest-dom": "^5.14.1",
